@@ -23,6 +23,14 @@
 
 巡巡媽媽會用語音提示下一步，畫面上的黃色箭頭會指向目標。手機橫放比較好操作。
 
+## 在 iPad 上當 App 玩
+
+1. 用 iPad 的 Safari 打開 https://vicjuan.github.io/xiaoxun-rescue-game/
+2. 點網址列旁的**分享**按鈕，選**「加入主畫面」**，再按「新增」。
+3. 主畫面會出現小巡圖示，點開就是全螢幕遊戲。第一次打開後會存到 iPad 裡，之後沒網路也能玩。
+
+iPhone 和 Android 也能用同樣的方式加入主畫面。
+
 ## 在本機執行
 
 不需要安裝或建置，直接用瀏覽器開 `index.html`，或在專案資料夾啟動任一靜態伺服器：
@@ -37,8 +45,12 @@ python3 -m http.server 8000
 ## 專案結構
 
 ```
-index.html   遊戲本體（HTML、CSS、JavaScript 與語音都在同一個檔案）
-.nojekyll    讓 GitHub Pages 直接提供靜態檔案
+index.html             遊戲本體（HTML、CSS、JavaScript 與語音都在同一個檔案）
+manifest.webmanifest   主畫面 App 的名稱、圖示與全螢幕設定
+sw.js                  離線快取（改版時把 VERSION 加一）
+apple-touch-icon.png   iPad / iPhone 主畫面圖示
+icons/                 其他尺寸的 App 圖示
+.nojekyll              讓 GitHub Pages 直接提供靜態檔案
 ```
 
 ## 使用的開源資源

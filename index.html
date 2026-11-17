@@ -2,7 +2,15 @@
 <html lang="zh-Hant-TW">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#12302a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="小巡救援">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>小巡救援任務 3D 遊戲</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,7 +30,9 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body)}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);overscroll-behavior:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%}
+.stage,.stage *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+button{touch-action:manipulation}
 main{max-width:1100px;margin:0 auto;padding:14px 12px 24px;display:grid;gap:10px}
 header{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(24px,5vw,36px);margin:0;letter-spacing:2px;color:var(--accent)}
@@ -31,9 +41,10 @@ header p{margin:0;color:var(--muted);font-size:13px}
 @media (max-width:700px) and (orientation:portrait){.stage{aspect-ratio:4/5}}
 .stage canvas{display:block;width:100%;height:100%}
 .hud{position:absolute;left:10px;right:10px;top:10px;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:flex-start;pointer-events:none}
+.hud .mini{margin-left:auto}
 .mission{background:rgba(16,36,40,.82);border:1px solid rgba(255,178,56,.6);border-radius:12px;padding:6px 12px;font-weight:700;font-size:clamp(13px,2.4vw,17px)}
 .mission small{display:block;font-weight:500;color:var(--muted);font-size:clamp(11px,1.8vw,13px)}
-.meters{margin-left:auto;display:flex;gap:8px;align-items:center;background:rgba(16,36,40,.82);border-radius:12px;padding:6px 10px;font-size:13px;font-variant-numeric:tabular-nums}
+.meters{display:flex;gap:8px;align-items:center;background:rgba(16,36,40,.82);border-radius:12px;padding:6px 10px;font-size:13px;font-variant-numeric:tabular-nums}
 .bar{width:clamp(60px,14vw,110px);height:9px;border-radius:5px;background:rgba(255,255,255,.15);overflow:hidden}
 .bar i{display:block;height:100%;width:100%;background:var(--water)}
 .say{position:absolute;left:50%;transform:translateX(-50%);bottom:clamp(120px,26%,170px);max-width:min(88%,560px);background:#ffffff;color:#173840;border-radius:16px;padding:8px 14px;font-family:var(--display);font-weight:700;font-size:clamp(14px,2.8vw,19px);text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.3);opacity:0;transition:opacity .25s;pointer-events:none}
@@ -64,6 +75,19 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .prog{display:none;margin-top:4px;height:8px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden;width:min(220px,50vw)}
 .prog i{display:block;height:100%;width:0;background:#7fdc9a}
 .badge{position:absolute;left:50%;top:64px;transform:translateX(-50%);font-weight:700;font-size:14px;color:#fff;background:#b07cff;padding:4px 12px;border-radius:999px;opacity:0;pointer-events:none}
+.mini{pointer-events:auto;font:700 13px var(--body);color:#fff;background:rgba(16,36,40,.82);border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:6px 10px;cursor:pointer}
+.install{display:none;align-items:center;gap:10px;background:#1f4a40;border:1px solid var(--accent);border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.5}
+.install b{color:var(--accent)}
+.install button{margin-left:auto;flex:none}
+/* 從 iPad 主畫面打開時：遊戲佔滿整個螢幕，避開瀏海與 Home 指示條 */
+html.app,html.app body{height:100%;overflow:hidden}
+html.app main{max-width:none;padding:0;margin:0;height:100%;display:block}
+html.app header,html.app .install{display:none!important}
+html.app .stage{position:fixed;inset:0;width:auto;height:auto;aspect-ratio:auto;border:0;border-radius:0}
+.hud{top:calc(10px + env(safe-area-inset-top));left:calc(10px + env(safe-area-inset-left));right:calc(10px + env(safe-area-inset-right))}
+.joy{left:calc(clamp(10px,3vw,24px) + env(safe-area-inset-left));bottom:calc(clamp(10px,3vw,24px) + env(safe-area-inset-bottom))}
+.btns{right:calc(clamp(10px,3vw,24px) + env(safe-area-inset-right));bottom:calc(clamp(10px,3vw,24px) + env(safe-area-inset-bottom))}
+@media (min-width:900px) and (pointer:coarse){.joy{width:170px}.act{width:104px;font-size:19px}}
 .err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:20px;text-align:center}
 </style>
 </head>
@@ -73,9 +97,14 @@ header p{margin:0;color:var(--muted);font-size:13px}
     <h1>小巡救援任務</h1>
     <p>3D 遊戲 · 五關：森林火災、淹水、大風、土石流、地震，最後飛回機庫</p>
   </header>
+  <div class="install" id="install" role="note">
+    <span>想在 iPad 上像 App 一樣玩？點 Safari 的<b>分享</b>按鈕，再點<b>「加入主畫面」</b>。之後從主畫面打開就是全螢幕，沒網路也能玩。</span>
+    <button class="small" id="installClose" type="button">知道了</button>
+  </div>
   <div class="stage" id="stage">
     <div class="hud">
       <div class="mission"><span id="mission">任務</span><div class="prog" id="prog"><i id="progFill"></i></div></div>
+      <button class="mini" id="voiceBtn" type="button" aria-pressed="true">聲音：開</button>
       <div class="meters">水箱 <span class="bar"><i id="tank"></i></span> <span id="clock">0:00</span></div>
     </div>
     <div class="say" id="say"></div>
@@ -101,9 +130,6 @@ header p{margin:0;color:var(--muted);font-size:13px}
     </div>
     <div class="err" id="err">這台裝置的瀏覽器無法顯示 3D 畫面。</div>
   </div>
-  <div class="row" style="justify-content:flex-start">
-    <button class="small" id="voiceBtn" type="button" aria-pressed="true">媽媽的聲音：開</button>
-  </div>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -112,6 +138,13 @@ const VOICE = ["SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//OE
 const LINES = ["小巡，今天的任務開始囉！先去救樹上的小猴子吧。", "抓穩了！把小猴子送到河對岸的綠色圓圈。", "山坡著火了！飛過去，按住灑水，把火撲滅。", "水箱沒水了，飛到河面上補水。", "做得好！這一關完成了。", "下大雨了，河水淹到小屋！飛到屋頂上，按吊籃放下救生圈。", "救生艇在左邊等著。飛到救生艇旁邊，帶它開到小屋。", "風越來越大了！快飛回機庫躲風。", "風停了。鳥巢被吹到地上，用吊籃把它送回樹上。", "山坡發生土石流！飛到大石頭附近，用熱成像找人。", "找到了！先去機庫拿急救包。", "拿到了！把急救包送到大石頭上的登山客那裡。", "跟著綠色圓圈飛，幫救難隊標出安全路線。", "地震了！小屋倒了，飛過去聽聽看有沒有人。", "聽到叩叩叩的聲音！天黑了，停在小屋上面照亮，媽媽會把屋頂吊開。", "任務全部完成！飛回機庫休息吧。", "太棒了！小巡今天救了好多朋友。", "再靠近一點。", "水箱滿了，回去滅火吧！", "救生圈送到了！", "躲好了，等風停。"];
 (() => {
 const $ = id => document.getElementById(id);
+const standalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches;
+if (standalone) document.documentElement.classList.add('app');
+const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let hideTip = false; try { hideTip = localStorage.getItem('xiaoxun-install-tip') === 'off'; } catch (e) {}
+if (isiOS && !standalone && !hideTip) $('install').style.display = 'flex';
+$('installClose').addEventListener('click', () => { $('install').style.display = 'none'; try { localStorage.setItem('xiaoxun-install-tip', 'off'); } catch (e) {} });
+if ('serviceWorker' in navigator && location.protocol === 'https:') { navigator.serviceWorker.register('sw.js').catch(() => {}); }
 if (!window.THREE) { $('err').style.display = 'flex'; $('err').textContent = '3D 程式庫沒有載入，請重新整理頁面。'; return; }
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const lerp = (a, b, u) => a + (b - a) * u;
@@ -532,7 +565,7 @@ function say(i) {
   $('say').innerHTML = '<b>巡巡媽媽：</b>' + LINES[i]; $('say').style.opacity = 1; sayTimer = 4.5;
   if (voiceOn && actx && vbufs[i]) { if (curSrc) try { curSrc.stop(); } catch (e) {} const s = actx.createBufferSource(); s.buffer = vbufs[i]; s.connect(actx.destination); s.start(); curSrc = s; }
 }
-$('voiceBtn').addEventListener('click', () => { voiceOn = !voiceOn; $('voiceBtn').textContent = '媽媽的聲音：' + (voiceOn ? '開' : '關'); $('voiceBtn').setAttribute('aria-pressed', voiceOn); if (voiceOn) initAudio(); });
+$('voiceBtn').addEventListener('click', () => { voiceOn = !voiceOn; $('voiceBtn').textContent = '聲音：' + (voiceOn ? '開' : '關'); $('voiceBtn').setAttribute('aria-pressed', voiceOn); if (voiceOn) initAudio(); });
 
 /* ---------- input ---------- */
 const input = { x: 0, z: 0 }, keys = {};
