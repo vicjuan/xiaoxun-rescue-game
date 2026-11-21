@@ -61,18 +61,22 @@ header p{margin:0;color:var(--muted);font-size:13px}
 .act.fly{background:#2fa35a}
 .act.fly.land{background:#7a5bd1}
 .act:disabled{opacity:.45}
-.lift{position:absolute;left:calc(clamp(10px,3vw,24px) + clamp(110px,24vw,150px) + 14px + env(safe-area-inset-left));bottom:calc(clamp(10px,3vw,24px) + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:6px;touch-action:none}
+.lift{position:absolute;left:calc(12px + env(safe-area-inset-left));top:29%;bottom:36%;display:flex;flex-direction:column;align-items:center;gap:6px;touch-action:none;background:rgba(16,36,40,.55);border-radius:14px;padding:6px}
 .liftBtn{width:clamp(44px,8vw,54px);height:clamp(40px,7vw,48px);border-radius:12px;border:2px solid rgba(255,255,255,.6);background:rgba(16,36,40,.78);color:#fff;font-size:18px;cursor:pointer;touch-action:none}
 .liftBtn.on{background:#2f8fd8}
-.track{position:relative;width:16px;height:clamp(70px,16vw,110px);border-radius:8px;background:rgba(255,255,255,.18);overflow:visible;touch-action:none;cursor:ns-resize}
+.track{position:relative;width:16px;flex:1 1 auto;min-height:40px;border-radius:8px;background:rgba(255,255,255,.18);overflow:visible;touch-action:none;cursor:ns-resize}
 .track i{position:absolute;left:0;right:0;bottom:0;height:30%;border-radius:8px;background:linear-gradient(#7fdcff,#2f8fd8)}
 .track b{position:absolute;left:50%;bottom:30%;width:30px;height:12px;margin:0 0 -6px -15px;border-radius:6px;background:#ffb238;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.altTitle{font:700 12px var(--body);color:#cfe3da}
 .altText{font:700 13px var(--body);color:#fff;background:rgba(16,36,40,.82);border-radius:8px;padding:2px 8px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .gauges{position:absolute;right:calc(10px + env(safe-area-inset-right));top:calc(54px + env(safe-area-inset-top));display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(16,36,40,.72);border-radius:14px;padding:6px 8px 8px;pointer-events:auto}
 .speedo{width:clamp(78px,13vw,116px);height:auto;display:block}
-.gear{display:flex;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.35)}
-.gear button{font:700 13px var(--body);color:#fff;background:transparent;border:0;padding:5px 9px;cursor:pointer;touch-action:manipulation}
-.gear button.on{background:#ffb238;color:#2a1a00}
+.throttle{position:absolute;left:57%;top:9%;bottom:60%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 10px;background:rgba(16,36,40,.55);border-radius:14px;touch-action:none;cursor:ns-resize}
+.throttle span{font:700 13px var(--body);color:#fff;line-height:1}
+.throttle .tt{font-size:11px;color:#cfe3da;font-weight:500}
+.thrTrack{position:relative;width:20px;flex:1 1 auto;min-height:40px;border-radius:10px;background:rgba(255,255,255,.18)}
+.thrTrack i{position:absolute;left:0;right:0;bottom:0;height:45%;border-radius:10px;background:linear-gradient(#ff6b4a,#ffb238 45%,#7fdc9a)}
+.thrTrack b{position:absolute;left:50%;bottom:45%;width:38px;height:16px;margin:0 0 -8px -19px;border-radius:8px;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.45)}
 .act:active,.act.on{transform:scale(.94);filter:brightness(1.15)}
 .act:focus-visible{outline:3px solid #fff;outline-offset:2px}
 .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(12,33,29,.72);text-align:center;padding:20px}
@@ -103,7 +107,7 @@ html.app .stage{position:fixed;inset:0;width:auto;height:auto;aspect-ratio:auto;
 .hud{top:calc(10px + env(safe-area-inset-top));left:calc(10px + env(safe-area-inset-left));right:calc(10px + env(safe-area-inset-right))}
 .joy{left:calc(clamp(10px,3vw,24px) + env(safe-area-inset-left));bottom:calc(clamp(10px,3vw,24px) + env(safe-area-inset-bottom))}
 .btns{right:calc(clamp(10px,3vw,24px) + env(safe-area-inset-right));bottom:calc(clamp(10px,3vw,24px) + env(safe-area-inset-bottom))}
-@media (min-width:900px) and (pointer:coarse){.joy{width:170px}.act{width:104px;font-size:19px}.lift{left:calc(24px + 170px + 16px + env(safe-area-inset-left))}}
+@media (min-width:900px) and (pointer:coarse){.joy{width:170px}.act{width:104px;font-size:19px}}
 .err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:20px;text-align:center}
 </style>
 </head>
@@ -129,10 +133,17 @@ html.app .stage{position:fixed;inset:0;width:auto;height:auto;aspect-ratio:auto;
     <div class="edge" id="edge"><svg viewBox="0 0 40 40"><path d="M20 3 L36 34 L20 26 L4 34 Z" fill="#ffd34d" stroke="#5a3a00" stroke-width="2"/></svg></div>
     <div class="joy" id="joy" aria-label="移動搖桿"><div class="knob" id="knob"></div></div>
     <div class="lift" id="lift" aria-label="高度升降機">
+      <span class="altTitle">高度</span>
       <button class="liftBtn" id="up" type="button" aria-label="上升">▲</button>
       <div class="track" id="track"><i id="altFill"></i><b id="altKnob"></b></div>
       <button class="liftBtn" id="down" type="button" aria-label="下降">▼</button>
       <span class="altText" id="altText">0 m</span>
+    </div>
+    <div class="throttle" id="throttle" role="slider" aria-label="快慢：往上滑變快，往下滑變慢" aria-valuemin="0" aria-valuemax="100" aria-valuenow="45" tabindex="0">
+      <span>快</span>
+      <div class="thrTrack" id="thrTrack"><i id="thrFill"></i><b id="thrKnob"></b></div>
+      <span>慢</span>
+      <span class="tt">上下滑</span>
     </div>
     <div class="btns">
       <button class="act fly" id="fly" type="button">起飛</button>
@@ -149,9 +160,6 @@ html.app .stage{position:fixed;inset:0;width:auto;height:auto;aspect-ratio:auto;
         <text id="speedNum" x="60" y="92" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">0</text>
         <text x="60" y="106" text-anchor="middle" font-size="10" fill="#a7c4b6">km/h</text>
       </svg>
-      <div class="gear" role="group" aria-label="快慢檔">
-        <button type="button" data-g="0">慢</button><button type="button" data-g="1" class="on">中</button><button type="button" data-g="2">快</button>
-      </div>
     </div>
     <div class="overlay" id="start">
       <h2>小巡救援任務</h2>
@@ -526,7 +534,7 @@ const BOAT_START = V3(-46, 0, 14), BOAT_DEST = V3(-20.8, 0, 5.2);
 const pos = V3(-8, 12, 30);
 const env = { smoke: 0, storm: 0, rain: 0, flood: 0, wind: 0, night: 0, rainbow: 0, thermal: 0 };
 const envT = Object.assign({}, env);
-const ST = { flying: false, altT: 9, gear: 1, stage: 0, task: 0, carry: null, tank: 1, time: 0, playing: false, done: false, spraying: false, rope: 0, vel: V3(0, 0, 0), yaw: Math.PI, landed: 0, hold: 0, stageT: 0, taskT: 0, busy: 0, emptyWarned: false, ev: {} };
+const ST = { flying: false, altT: 9, gear: 1, thr: 0.45, stage: 0, task: 0, carry: null, tank: 1, time: 0, playing: false, done: false, spraying: false, rope: 0, vel: V3(0, 0, 0), yaw: Math.PI, landed: 0, hold: 0, stageT: 0, taskT: 0, busy: 0, emptyWarned: false, ev: {} };
 const STAGES = [
   { name: '第一關', sub: '森林火災', tasks: ['pickMonkey', 'dropMonkey', 'fires'] },
   { name: '第二關', sub: '淹水', tasks: ['ring', 'escort'] },
@@ -580,7 +588,7 @@ function nextTask() {
 }
 function resetWorld() {
   Object.assign(ST, { stage: 0, task: 0, carry: null, tank: 1, time: 0, done: false, spraying: false, rope: 0, landed: 0, hold: 0, stageT: 0, taskT: 0, busy: 0, emptyWarned: false, ev: {} });
-  ST.vel.set(0, 0, 0); pos.set(DOCK.x, PAD_Y + 2.75, DOCK.z); ST.yaw = Math.PI; ST.flying = false; ST.altT = 9; flyUI();
+  ST.vel.set(0, 0, 0); pos.set(DOCK.x, PAD_Y + 2.75, DOCK.z); ST.yaw = Math.PI; ST.flying = false; ST.altT = 9; flyUI(); setThr(0.45);
   Object.assign(env, { smoke: 0, storm: 0, rain: 0, flood: 0, wind: 0, night: 0, rainbow: 0, thermal: 0 });
   NEST.g.position.copy(NEST_PALM.top()); KIT.visible = false; boat.visible = false; lifeRing.visible = false;
   [roofP, hiker, resA, resB, quakeP, boatDriver].forEach(p => { p.g.visible = false; p.ring.visible = false; });
@@ -621,7 +629,7 @@ sprayBtn.addEventListener('pointerdown', e => { ST.spraying = true; sprayBtn.cla
 const sprayEnd = () => { ST.spraying = false; sprayBtn.classList.remove('on'); };
 sprayBtn.addEventListener('pointerup', sprayEnd); sprayBtn.addEventListener('pointercancel', sprayEnd);
 $('hook').addEventListener('click', () => hookAction());
-const GEARS = [8, 15, 24], ALT_MIN = 2, ALT_MAX = 30;
+const SPEED_MIN = 6, SPEED_MAX = 26, ALT_MIN = 2, ALT_MAX = 30;
 function overWater() { return overRiver(pos.x, pos.z) || (env.flood > 0.1 && terrainH(pos.x, pos.z) < floodY() && hdist(pos, DOCK) > 3.5); }
 function flyUI() { const b = $('fly'); b.textContent = ST.flying ? '降落' : '起飛'; b.classList.toggle('land', ST.flying); }
 function toggleFly() {
@@ -631,8 +639,15 @@ function toggleFly() {
   flyUI();
 }
 $('fly').addEventListener('click', toggleFly);
-function setGear(g) { ST.gear = (g + 3) % 3; document.querySelectorAll('.gear button').forEach(b => b.classList.toggle('on', +b.dataset.g === ST.gear)); }
-document.querySelectorAll('.gear button').forEach(b => b.addEventListener('click', () => setGear(+b.dataset.g)));
+function setThr(v) { ST.thr = clamp(v, 0, 1); const pc = (ST.thr * 100).toFixed(1) + '%'; $('thrFill').style.height = pc; $('thrKnob').style.bottom = pc; $('throttle').setAttribute('aria-valuenow', Math.round(ST.thr * 100)); }
+const STEPS = [0, 0.45, 1];
+function setGear(g) { ST.gear = (g + 3) % 3; setThr(STEPS[ST.gear]); }
+const thr = $('throttle'), thrTrack = $('thrTrack'); let thrId = null;
+function thrFrom(e) { const r = thrTrack.getBoundingClientRect(); setThr((r.bottom - e.clientY) / r.height); }
+thr.addEventListener('pointerdown', e => { thrId = e.pointerId; thr.setPointerCapture(e.pointerId); thrFrom(e); e.preventDefault(); });
+thr.addEventListener('pointermove', e => { if (e.pointerId === thrId) thrFrom(e); });
+thr.addEventListener('pointerup', () => { thrId = null; }); thr.addEventListener('pointercancel', () => { thrId = null; });
+thr.addEventListener('keydown', e => { if (e.key === 'ArrowUp') { setThr(ST.thr + 0.1); e.preventDefault(); e.stopPropagation(); } if (e.key === 'ArrowDown') { setThr(ST.thr - 0.1); e.preventDefault(); e.stopPropagation(); } });
 let liftDir = 0;
 [['up', 1], ['down', -1]].forEach(([id, d]) => {
   const b = $(id);
@@ -728,7 +743,7 @@ function step(dt) {
   if (keys.ArrowLeft || keys.KeyA) ix = -1; if (keys.ArrowRight || keys.KeyD) ix = 1;
   if (keys.ArrowUp || keys.KeyW) iz = -1; if (keys.ArrowDown || keys.KeyS) iz = 1;
   const il = Math.hypot(ix, iz); if (il > 1) { ix /= il; iz /= il; }
-  const SPEED = GEARS[ST.gear], a = active ? 1 : 0;
+  const SPEED = SPEED_MIN + (SPEED_MAX - SPEED_MIN) * ST.thr, a = active ? 1 : 0;
   ST.vel.lerp(V3(ix * SPEED * a, 0, iz * SPEED * a), Math.min(1, dt * 3.2));
   pos.x = clamp(pos.x + (ST.vel.x + env.wind * 4.5 * (ST.flying ? 1 : 0)) * dt, -62, 62); pos.z = clamp(pos.z + ST.vel.z * dt, -70, 42);
   const ground = Math.max(terrainH(pos.x, pos.z), WATER_Y, env.flood > 0.01 ? floodY() : -9);
