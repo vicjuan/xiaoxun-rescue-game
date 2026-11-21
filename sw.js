@@ -1,5 +1,5 @@
 // 小巡救援任務：離線快取。改版時把 VERSION 加一，舊快取會自動清掉。
-const VERSION = 'xiaoxun-v1';
+const VERSION = 'xiaoxun-v2';
 const LOCAL = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png'];
 const REMOTE = [
   'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
